@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title th:text="${isEdit} ? 'Edit task' : 'New task'">Task</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<header>
+  <h1 th:text="${isEdit} ? 'Edit task' : 'New task'">Task</h1>
+  <nav>
+    <a th:href="@{/tasks}">← Back to list</a>
+  </nav>
+</header>
+<main>
+  <div class="panel">
+    <form th:object="${task}"
+          method="post"
+          th:action="${isEdit} ? @{/tasks/{id}(id=${taskId})} : @{/tasks}">
+
+      <p class="muted" style="margin-top:0">Please provide a short, action-oriented title and an optional description.</p>
+
+      <div class="field">
+        <label for="title">Title</label>
+        <input id="title" type="text" th:field="*{title}" maxlength="100" required/>
+        <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">error</div>
+      </div>
+
+      <div class="field">
+        <label for="description">Description <span class="muted">(optional)</span></label>
+        <textarea id="description" th:field="*{description}" maxlength="500"></textarea>
+        <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">error</div>
+      </div>
+
+      <div class="field">
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}">
+          <option th:each="s : ${T(com.dts.tasktracker.entity.TaskStatus).values()}"
+                  th:value="${s}"
+                  th:text="${s}">TO_DO</option>
+        </select>
+        <div class="error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">error</div>
+      </div>
+
+      <div class="field">
+        <label for="dueDateTime">Due date &amp; time</label>
+        <input id="dueDateTime" type="datetime-local" th:field="*{dueDateTime}" required/>
+        <div class="error" th:if="${#fields.hasErrors('dueDateTime')}" th:errors="*{dueDateTime}">error</div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" th:text="${isEdit} ? 'Save changes' : 'Create task'">Save</button>
+        <a class="btn" th:href="@{/tasks}">Cancel</a>
+        <span class="muted" th:if="${isEdit}" aria-hidden="true">Keyboard: Tab then Enter to save</span>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

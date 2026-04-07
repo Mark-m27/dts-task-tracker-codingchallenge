@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tasks</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<header>
+  <h1>Task tracker</h1>
+  <nav>
+    <a th:href="@{/tasks}">All tasks</a>
+    ·
+    <a th:href="@{/swagger-ui/index.html}">API docs</a>
+  </nav>
+</header>
+<main>
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem">
+      <h2 style="margin:0;font-size:1.1rem">Your tasks</h2>
+      <div class="actions">
+        <form method="get" th:action="@{/tasks}" class="inline-form" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+          <input type="text" name="q" th:value="${q}" placeholder="Search by ID, title or description" aria-label="Search tasks"
+                 style="max-width:18rem;padding:0.45rem 0.5rem;border:1px solid var(--border);border-radius:6px;min-width:14rem"/>
+          <button class="btn" type="submit">Search</button>
+          <a class="btn" th:href="@{/tasks}" aria-label="Clear search">Clear</a>
+        </form>
+        <a class="btn btn-primary" th:href="@{/tasks/new}">New task</a>
+      </div>
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(tasks)}">
+      No tasks yet. Create one to get started.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(tasks)}">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Due</th>
+        <th>Status</th>
+        <th class="table-actions"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="task : ${tasks}">
+        <td><span class="muted" th:text="${'#' + task.id}">#1</span></td>
+        <td>
+          <strong th:text="${task.title}">Title</strong>
+          <div class="muted" th:if="${task.description != null}" th:text="${task.description}">desc</div>
+        </td>
+        <td th:text="${#temporals.format(task.dueDateTime, 'dd MMM yyyy HH:mm')}">due</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+            <span th:classappend="${task.status.name() == 'TO_DO'} ? ' badge todo' : (${task.status.name() == 'IN_PROGRESS'} ? ' badge progress' : ' badge done')"
+                  th:text="${T(com.dts.tasktracker.web.view.ViewUtils).prettyStatus(task.status)}">To Do</span>
+            <form class="inline-form" th:action="@{/tasks/{id}/status(id=${task.id})}" method="post">
+              <select class="status-select" name="status" onchange="this.form.submit()"
+                      th:attr="aria-label=${'Status for ' + task.title}">
+                <option th:each="s : ${T(com.dts.tasktracker.entity.TaskStatus).values()}"
+                        th:value="${s}"
+                        th:selected="${task.status == s}"
+                        th:text="${T(com.dts.tasktracker.web.view.ViewUtils).prettyStatus(s)}">To Do</option>
+              </select>
+            </form>
+          </div>
+        </td>
+        <td class="actions">
+          <a class="btn" th:href="@{/tasks/{id}/edit(id=${task.id})}">Edit</a>
+          <form class="inline-form" th:action="@{/tasks/{id}/delete(id=${task.id})}" method="post"
+                onsubmit="return confirm('Delete this task?');">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
