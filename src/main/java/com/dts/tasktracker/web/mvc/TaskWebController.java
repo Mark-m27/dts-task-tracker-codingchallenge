@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 @Controller
 @RequestMapping("/tasks")
 public class TaskWebController {
@@ -33,36 +27,9 @@ public class TaskWebController {
     }
 
     @GetMapping
-    public String list(Model model,
-                       @RequestParam(value = "q", required = false) String query) {
-        List<TaskResponse> tasks = taskService.findAll();
-
-        // Filter (by id, title, description)
-        if (query != null && !query.isBlank()) {
-            String q = query.trim();
-            Long idFilter = null;
-            try { idFilter = Long.parseLong(q); } catch (NumberFormatException ignored) {}
-            final Long idF = idFilter;
-            final String qLower = q.toLowerCase(Locale.ROOT);
-            tasks = tasks.stream()
-                    .filter(t -> (idF != null && Objects.equals(t.getId(), idF))
-                            || (t.getTitle() != null && t.getTitle().toLowerCase(Locale.ROOT).contains(qLower))
-                            || (t.getDescription() != null && t.getDescription().toLowerCase(Locale.ROOT).contains(qLower)))
-                    .collect(Collectors.toList());
-        }
-
-        model.addAttribute("tasks", tasks);
-        model.addAttribute("q", query == null ? "" : query);
+    public String list(Model model) {
+        model.addAttribute("tasks", taskService.findAll());
         return "tasks/list";
-    }
-
-    private static int statusOrder(TaskStatus s) {
-        if (s == null) return 99;
-        return switch (s) {
-            case TO_DO -> 1;
-            case IN_PROGRESS -> 2;
-            case DONE -> 3;
-        };
     }
 
     @GetMapping("/new")
