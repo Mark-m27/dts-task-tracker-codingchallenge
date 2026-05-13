@@ -4,7 +4,14 @@ Simple caseworker task tracker built for the DTS developer technical test. The a
 
 It is implemented as a single Spring Boot application using Java 17, with a lightweight Thymeleaf frontend, REST API, and H2 database for persistence.
 
-For full transparency, I used Codex by OpenAI to assist with some of the initial structure and syntax. All code has been reviewed and adjusted to ensure it behaves correctly and meets the requirements. Happy to go through and answer any questions on any aspects. Thanks.
+For full transparency, I used Codex by OpenAI to assist with some of the initial structure and syntax. All code has been reviewed and adjusted to ensure it behaves correctly and meets the requirements. Happy to go through and answer any questions on any aspects. 
+
+I also built a very similar application to this 5 years ago for University, which was a contacts service but same basic requirements from the API, this is where I intially learned Spring Boot and the reason I also used it within this application. This can also be viewied on my github below.
+
+https://github.com/Mark-m27/CSCU9YW-Client
+https://github.com/Mark-m27/ContactsService-CSCU9YQ
+
+Below are instructions and details on how to get the app running.
 
 ## Requirements
 
